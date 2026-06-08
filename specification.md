@@ -61,52 +61,79 @@
 ```mermaid
 graph TD
     subgraph Clients [Клиенты]
+        MAX[MAX Мессенджер]
+        VK[VK Мессенджер]
         TG[Telegram]
-        VK[Vikontakte]
-        MAX[мессенджер MAX]
     end
 
-    subgraph Gateway [API Gateway & Ingestion]
-        Bot[Python Bot: aiogram / vk_api]
-        Validator[Валидация и PII Masking]
+    subgraph Gateway [API Gateway - FastAPI]
+        MAX_Adapter[MAX Adapter]
+        VK_Adapter[VK Adapter]
+        TG_Adapter[Telegram Adapter]
+        Validator[Валидация + PII Masking]
     end
 
-    subgraph AI_Core [Локальный AI-пайплайн (On-Premise)]
-        LangDetect[FastText: Детекция языка]
+    subgraph Queue [Message Broker]
+        RabbitMQ[(RabbitMQ)]
+    end
+
+    subgraph CeleryWorkers [Celery Workers]
+        TextQueue[translate_text queue]
+        VoiceQueue[translate_voice queue]
+        TTSQueue[tts_generation queue]
+    end
+
+    subgraph ML_Core [On-Premise ML Core]
+        FastText[FastText: Lang Detection]
         Whisper[Faster-Whisper: ASR]
-        NLLB[NLLB-200: Перевод]
-        PostProc[Terminology Override & Fraud Check]
-        TTS[Silero TTS: Озвучка ответа]
+        NLLB[NLLB-200: Translation]
+        Silero[Silero TTS]
+        Presidio[Presidio: PII]
+        FraudDet[Fraud Detector]
+        TermOver[Terminology Override]
+        Denoise[Audio Denoiser]
     end
 
-    subgraph State [Состояние и Очереди]
-        Redis[(Redis: Context & Cache)]
-        Celery[(Celery + RabbitMQ)]
+    subgraph State [State & Cache]
+        Redis[(Redis: Context)]
+        PostgreSQL[(PostgreSQL: Audit)]
+        MinIO[(MinIO/S3: Media)]
     end
 
-    subgraph Operator [Рабочее место]
-        amoCRM[amoCRM API]
-        OperatorUI[Интерфейс Оператора]
+    subgraph Integrations [Внешние сервисы]
+        AmoCRM[amoCRM API]
+        TelegramBot[Telegram Bot API]
+        Alerts[Telegram Alerts]
     end
 
-    Clients -->|Webhook| Bot
-    Bot --> Validator
-    Validator -->|Task| Celery
-    Celery --> LangDetect
-    LangDetect -->|Voice| Whisper
-    LangDetect -->|Text| NLLB
-    Whisper --> NLLB
-    NLLB --> PostProc
-    PostProc -->|Russian Text| amoCRM
-    amoCRM --> OperatorUI
-    OperatorUI -->|Russian Reply| PostProc
-    PostProc -->|Translated Text| Bot
-    PostProc -->|Audio| TTS
-    TTS --> Bot
-    Bot --> Clients
-    
-    Redis -.-> NLLB
-    Redis -.-> PostProc
+    MAX --> MAX_Adapter
+    VK --> VK_Adapter
+    TG --> TG_Adapter
+    MAX_Adapter --> Validator
+    VK_Adapter --> Validator
+    TG_Adapter --> Validator
+    Validator --> RabbitMQ
+    RabbitMQ --> TextQueue
+    RabbitMQ --> VoiceQueue
+    RabbitMQ --> TTSQueue
+
+    TextQueue --> FastText
+    TextQueue --> Presidio
+    TextQueue --> NLLB
+    TextQueue --> TermOver
+    TextQueue --> FraudDet
+    VoiceQueue --> Whisper
+    VoiceQueue --> Denoise
+    TTSQueue --> NLLB
+    TTSQueue --> Silero
+
+    NLLB --> Redis
+    Presidio --> PostgreSQL
+    Whisper --> MinIO
+    Silero --> MinIO
+    TextQueue --> AmoCRM
+    TTSQueue --> AmoCRM
+    AmoCRM --> Alerts
 ```
 
 ### 5.2. Sequence Diagram: Обработка голосового сообщения
