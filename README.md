@@ -379,15 +379,3 @@ poetry run locust -f load_tests/locustfile.py --host=http://localhost:8000
 ✅ **Production Hardening:** Observability, Load Testing, LoRA Fine-Tuning  
 
 **Рекомендуемый следующий шаг:** Ознакомьтесь с файлом **[review.md](review.md)**, где содержатся критически важные архитектурные рекомендации (внедрение DI-контейнера `dishka`, MLflow для трекинга экспериментов, K8s GPU-планирование, Alembic для миграций) для перевода системы в состояние "High-Load Enterprise Production".
-
----
-
-## 🗺️ Roadmap к Production
-
-| Приоритет | Задача | Срок | Сложность |
-| :--- | :--- | :--- | :--- |
-| 🥇 **1** | Внедрить Alembic для БД + Yandex Lockbox для секретов | 1 неделя | 🟢 Низкая |
-| 🥈 **2** | Добавить `aiolimiter` для amoCRM + Dead Letter Queue в Celery | 1 неделя | 🟡 Средняя |
-| 🥉 **3** | Рефакторинг на Dependency Injection (`dishka`) | 1 неделя | 🟡 Средняя |
-| **4** | Написание Helm-чарта / K8s манифестов + CI/CD пайплайн | 1 неделя | 🔴 Высокая |
-
