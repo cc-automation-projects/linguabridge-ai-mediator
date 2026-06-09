@@ -1,0 +1,117 @@
+version: '3.9'
+
+services:
+  # === PostgreSQL 15 ===
+  postgres:
+    image: postgres:15-alpine
+    container_name: linguabridge-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: linguabridge
+      POSTGRES_PASSWORD: linguabridge
+      POSTGRES_DB: linguabridge
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U linguabridge"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - linguabridge-net
+
+  # === Redis 7 with AOF persistence ===
+  redis:
+    image: redis:7-alpine
+    container_name: linguabridge-redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory 512mb
+      --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - linguabridge-net
+
+  # === RabbitMQ 3.13 with Management UI ===
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: linguabridge-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_VHOST: /
+    ports:
+      - "5672:5672"
+      - "15672:15672"  # Management UI
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    networks:
+      - linguabridge-net
+
+  # === MinIO (S3-compatible) ===
+  minio:
+    image: minio/minio:latest
+    container_name: linguabridge-minio
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"   # API
+      - "9001:9001"   # Console UI
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - linguabridge-net
+
+  # === MinIO bucket & lifecycle initialization ===
+  minio-init:
+    image: minio/mc:latest
+    container_name: linguabridge-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      sleep 5;
+      mc alias set linguabridge http://minio:9000 minioadmin minioadmin;
+      mc mb --ignore-existing linguabridge/linguabridge-media;
+      mc anonymous set download linguabridge/linguabridge-media;
+      echo 'Bucket created successfully';
+      "
+    networks:
+      - linguabridge-net
+
+volumes:
+  postgres_data:
+  redis_data:
+  rabbitmq_data:
+  minio_data:
+
+networks:
+  linguabridge-net:
+    driver: bridge

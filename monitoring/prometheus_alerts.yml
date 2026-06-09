@@ -1,0 +1,38 @@
+groups:
+  - name: linguabridge_alerts
+    rules:
+      - alert: HighTranslationLatency
+        expr: histogram_quantile(0.95, sum(rate(linguabridge_translation_latency_seconds_bucket{media_type="text"}[5m])) by (le, channel)) > 2.0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Высокая задержка перевода (P95 > 2с)"
+          description: "Система обрабатывает текстовые сообщения медленнее SLA. Проверьте нагрузку на NLLB или очередь Celery."
+
+      - alert: AmoCRMCircuitBreakerOpen
+        expr: sum(increase(python_exceptions_total{exception="CircuitBreakerError"}[5m])) > 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "amoCRM Circuit Breaker разомкнут"
+          description: "API amoCRM не отвечает или возвращает ошибки. Интеграция приостановлена для защиты системы."
+
+      - alert: FraudSpikeDetected
+        expr: sum(rate(linguabridge_fraud_alerts_total[10m])) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Всплеск попыток мошенничества"
+          description: "Обнаружена аномально высокая частота триггеров Fraud Detector. Рекомендуется проверить логи безопасности."
+
+      - alert: CeleryQueueBacklog
+        expr: celery_queue_length{queue="translate_voice"} > 100
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Накопление очереди голосовых сообщений"
+          description: "В очереди voice более 100 задач. Возможно, не хватает CPU/GPU воркеров или ASR деградировал."

@@ -1,0 +1,114 @@
+[tool.poetry]
+name = "linguabridge-ai-mediator"
+version = "0.1.0"
+description = "Омниканальный AI-медиатор для мгновенного двунаправленного перевода диалогов"
+authors = ["Your Team <dev@company.com>"]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+# === Web Framework ===
+fastapi = "^0.115.0"
+uvicorn = {extras = ["standard"], version = "^0.32.0"}
+
+# === Async HTTP Client ===
+httpx = "^0.27.2"
+
+# === Bot Frameworks ===
+aiogram = "^3.13.0"          # Telegram
+vk-api = "^11.9.9"           # VK
+
+# === Task Queue ===
+celery = {extras = ["redis"], version = "^5.4.0"}
+redis = "^5.2.0"
+
+# === Database ===
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.35"}
+asyncpg = "^0.30.0"
+alembic = "^1.13.3"
+
+# === S3 Storage ===
+aiobotocore = "^2.15.2"
+
+# === Validation & Config ===
+pydantic = "^2.9.2"
+pydantic-settings = "^2.5.2"
+
+# === ML/NLP ===
+fasttext-wheel = "^0.9.2"      # Более стабильная сборка fasttext для Python 3.12
+transformers = "^4.46.0"
+torch = "^2.5.0"
+bitsandbytes = "^0.44.1"
+accelerate = "^0.27.2"
+sentencepiece = "^0.2.0"
+protobuf = "^4.25.3"
+faster-whisper = "^1.0.3"
+silero-models = "^0.5.1"
+torchaudio = "^2.2.1"
+
+# === PII Masking ===
+presidio-analyzer = "^2.2.35"
+presidio-anonymizer = "^2.2.35"
+spacy = "^3.7.5"
+
+# === Terminology & Text Processing ===
+pyahocorasick = "^2.1.0"
+
+# === Audio Processing ===
+ffmpeg-python = "^0.2.0"
+soundfile = "^0.12.1"
+noisereduce = "^3.0.0"
+librosa = "^0.10.1"
+numpy = "^1.26.4"
+
+# === Circuit Breaker & Retry ===
+pybreaker = "^1.1.0"
+tenacity = "^9.0.0"
+
+# === Fine-Tuning & MLOps ===
+peft = "^0.9.0"
+datasets = "^2.18.0"
+wandb = "^0.16.0"
+structlog = "^24.4.0"
+opentelemetry-api = "^1.27.0"
+opentelemetry-sdk = "^1.27.0"
+opentelemetry-exporter-otlp = "^1.27.0"
+opentelemetry-instrumentation-fastapi = "^0.48b0"
+opentelemetry-instrumentation-celery = "^0.48b0"
+opentelemetry-instrumentation-httpx = "^0.48b0"
+opentelemetry-exporter-prometheus = "^0.48b0"
+prometheus-client = "^0.20.0"
+
+# === Rate Limiting ===
+slowapi = "^0.1.9"
+limits = "^3.13.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+pytest-asyncio = "^0.24.0"
+pytest-cov = "^5.0.0"
+locust = "^2.24.0"
+ruff = "^0.7.0"
+mypy = "^1.11.2"
+httpx = "^0.27.2"  # для TestClient
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "B", "UP", "RUF", "ASYNC"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
