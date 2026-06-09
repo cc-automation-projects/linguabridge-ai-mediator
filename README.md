@@ -201,49 +201,49 @@ sequenceDiagram
 
 | Документ | Описание |
 | :--- | :--- |
-| 📄 **[specification.md](specification.md)** | Полное Техническое Задание: бизнес-цели, KPI, функциональные/нефункциональные требования, стек. |
-| 🗺️ **[phases.md](phases.md)** | Высокоуровневая дорожная карта (Roadmap) реализации проекта. |
-| 🌳️ **[structure.md](structure.md)** | Структура (дерево) файлов реализации всего проекта. |
-| 🔍 **[review.md](review.md)** | **Architecture Review:** Аудит кода, список улучшений для Enterprise-уровня (DI, MLflow, K8s Hardening, LLM-as-a-Judge). |
+| 📄 **[specification.md](docs/specification.md)** | Полное Техническое Задание: бизнес-цели, KPI, функциональные/нефункциональные требования, стек. |
+| 🗺️ **[phases.md](docs/phases.md)** | Высокоуровневая дорожная карта (Roadmap) реализации проекта. |
+| 🌳️ **[structure.md](docs/structure.md)** | Структура (дерево) файлов реализации всего проекта. |
+| 🔍 **[review.md](docs/review.md)** | **Architecture Review:** Аудит кода, список улучшений для Enterprise-уровня (DI, MLflow, K8s Hardening, LLM-as-a-Judge). |
 
 ### 🏗️ Этап 1: Инфраструктура, Ingestion и Детекция языка
 
 | Документ | Описание |
 | :--- | :--- |
-| 📦 **[phase_1_step_1.md](phase_1_step_1.md)** | Базовая инфраструктура: Docker Compose, PostgreSQL, Redis, RabbitMQ, MinIO, Celery с приоритетными очередями, Pydantic-модели. |
-| 🔌 **[phase_1_step_2.md](phase_1_step_2.md)** | Мультиканальный Ingestion через паттерн **Channel Adapter**: FastAPI-роутеры и клиенты для **MAX → VK → Telegram**. |
-| 🧠 **[phase_1_step_3.md](phase_1_step_3.md)** | Мгновенная детекция языка через **FastText** и базовое PII-маскирование через **Microsoft Presidio** с кастомными паттернами для РФ. |
+| 📦 **[phase_1_step_1.md](docs/phase_1_step_1.md)** | Базовая инфраструктура: Docker Compose, PostgreSQL, Redis, RabbitMQ, MinIO, Celery с приоритетными очередями, Pydantic-модели. |
+| 🔌 **[phase_1_step_2.md](docs/phase_1_step_2.md)** | Мультиканальный Ingestion через паттерн **Channel Adapter**: FastAPI-роутеры и клиенты для **MAX → VK → Telegram**. |
+| 🧠 **[phase_1_step_3.md](docs/phase_1_step_3.md)** | Мгновенная детекция языка через **FastText** и базовое PII-маскирование через **Microsoft Presidio** с кастомными паттернами для РФ. |
 
 ### 🤖 Этап 2: Локальный ML-пайплайн (NLLB + Whisper)
 
 | Документ | Описание |
 | :--- | :--- |
-| 🌐 **[phase_2_step_1.md](phase_2_step_1.md)** | Развертывание и оптимизация **NLLB-200-distilled-600M**: 8-bit квантование, async-обертка, маппинг low-resource языков. |
-| 🎤 **[phase_2_step_2.md](phase_2_step_2.md)** | Интеграция **Faster-Whisper** для ASR: VAD-фильтр шума, int8-квантование, обработка голосовых от MAX/VK/Telegram. |
-| 📖 **[phase_2_step_3.md](phase_2_step_3.md)** | Движок **Terminology Override** на базе **Aho-Corasick** для пост-обработки перевода отраслевыми терминами. |
+| 🌐 **[phase_2_step_1.md](docs/phase_2_step_1.md)** | Развертывание и оптимизация **NLLB-200-distilled-600M**: 8-bit квантование, async-обертка, маппинг low-resource языков. |
+| 🎤 **[phase_2_step_2.md](docs/phase_2_step_2.md)** | Интеграция **Faster-Whisper** для ASR: VAD-фильтр шума, int8-квантование, обработка голосовых от MAX/VK/Telegram. |
+| 📖 **[phase_2_step_3.md](docs/phase_2_step_3.md)** | Движок **Terminology Override** на базе **Aho-Corasick** для пост-обработки перевода отраслевыми терминами. |
 
 ### 🏢 Этап 3: Интеграция с amoCRM и Управление контекстом
 
 | Документ | Описание |
 | :--- | :--- |
-| 🛡️ **[phase_3_step_1.md](phase_3_step_1.md)** | Асинхронный клиент **amoCRM** с **Circuit Breaker** (pybreaker), обработка скрытых ошибок 200 OK. |
-| 💾 **[phase_3_step_2.md](phase_3_step_2.md)** | Управление контекстом диалога в **Redis**: хранение последних 10 реплик с TTL 24ч, Pydantic-модели. |
-| 🎨 **[phase_3_step_3.md](phase_3_step_3.md)** | Форматирование вывода для оператора: Markdown-примечания в amoCRM с алертами, тегами и ссылками на оригинал. |
+| 🛡️ **[phase_3_step_1.md](docs/phase_3_step_1.md)** | Асинхронный клиент **amoCRM** с **Circuit Breaker** (pybreaker), обработка скрытых ошибок 200 OK. |
+| 💾 **[phase_3_step_2.md](docs/phase_3_step_2.md)** | Управление контекстом диалога в **Redis**: хранение последних 10 реплик с TTL 24ч, Pydantic-модели. |
+| 🎨 **[phase_3_step_3.md](docs/phase_3_step_3.md)** | Форматирование вывода для оператора: Markdown-примечания в amoCRM с алертами, тегами и ссылками на оригинал. |
 
 ### 🎙️ Этап 4: Голосовой тракт, TTS и Безопасность
 
 | Документ | Описание |
 | :--- | :--- |
-| 🔊 **[phase_4_step_1.md](phase_4_step_1.md)** | Интеграция **Silero TTS** для ответов + конвертация `.wav` → `.ogg` (Opus) через **FFmpeg** для мессенджеров. |
-| 🚨 **[phase_4_step_2.md](phase_4_step_2.md)** | Эвристический **Fraud Detector** на Aho-Corasick с весами для выявления социальной инженерии. |
-| 🔇 **[phase_4_step_3.md](phase_4_step_3.md)** | Продвинутое шумоподавление через **noisereduce** (спектральный метод) для снижения WER на 10-15%. |
+| 🔊 **[phase_4_step_1.md](docs/phase_4_step_1.md)** | Интеграция **Silero TTS** для ответов + конвертация `.wav` → `.ogg` (Opus) через **FFmpeg** для мессенджеров. |
+| 🚨 **[phase_4_step_2.md](docs/phase_4_step_2.md)** | Эвристический **Fraud Detector** на Aho-Corasick с весами для выявления социальной инженерии. |
+| 🔇 **[phase_4_step_3.md](docs/phase_4_step_3.md)** | Продвинутое шумоподавление через **noisereduce** (спектральный метод) для снижения WER на 10-15%. |
 
 ### 🚀 Этап 5: Production Hardening и Fine-Tuning
 
 | Документ | Описание |
 | :--- | :--- |
-| 🎓 **[phase_5_step_1.md](phase_5_step_1.md)** | Пайплайн **LoRA Fine-Tuning** для NLLB: извлечение "золотого датасета" из исправлений операторов в amoCRM, Canary Deployment. |
-| 📊 **[phase_5_steps_2_3.md](phase_5_steps_2_3.md)** | **Observability** (OpenTelemetry + Prometheus + алерты) и **Нагрузочное тестирование** через Locust. |
+| 🎓 **[phase_5_step_1.md](docs/phase_5_step_1.md)** | Пайплайн **LoRA Fine-Tuning** для NLLB: извлечение "золотого датасета" из исправлений операторов в amoCRM, Canary Deployment. |
+| 📊 **[phase_5_steps_2_3.md](docs/phase_5_steps_2_3.md)** | **Observability** (OpenTelemetry + Prometheus + алерты) и **Нагрузочное тестирование** через Locust. |
 
 ---
 
@@ -378,4 +378,4 @@ poetry run locust -f load_tests/locustfile.py --host=http://localhost:8000
 ✅ **Интеграции:** MAX, VK, Telegram, amoCRM  
 ✅ **Production Hardening:** Observability, Load Testing, LoRA Fine-Tuning  
 
-**Рекомендуемый следующий шаг:** Ознакомьтесь с файлом **[review.md](review.md)**, где содержатся критически важные архитектурные рекомендации (внедрение DI-контейнера `dishka`, MLflow для трекинга экспериментов, K8s GPU-планирование, Alembic для миграций) для перевода системы в состояние "High-Load Enterprise Production".
+**Рекомендуемый следующий шаг:** Ознакомьтесь с файлом **[review.md](docs/review.md)**, где содержатся критически важные архитектурные рекомендации (внедрение DI-контейнера `dishka`, MLflow для трекинга экспериментов, K8s GPU-планирование, Alembic для миграций) для перевода системы в состояние "High-Load Enterprise Production".
